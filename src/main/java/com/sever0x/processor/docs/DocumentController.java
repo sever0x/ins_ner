@@ -1,4 +1,4 @@
-package com.sever0x.processor;
+package com.sever0x.processor.docs;
 
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;

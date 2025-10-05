@@ -1,4 +1,4 @@
-package com.sever0x.processor;
+package com.sever0x.processor.docs;
 
 import com.sever0x.processor.api.LayoutApiRetriever;
 import org.apache.pdfbox.Loader;

@@ -1,4 +1,4 @@
-package com.sever0x.processor;
+package com.sever0x.processor.docs;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
