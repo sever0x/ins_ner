@@ -1,0 +1,8 @@
+{
+  "filename": "13 Muster-Versicherungsschein-VK-1.pdf",
+  "entities": {
+    "contract_number": ["LU/0011111111/01"],
+    "insurer": ["R+V Lebensversicherung AG"],
+    "client_name": ["Max Mustermann"]
+  }
+}

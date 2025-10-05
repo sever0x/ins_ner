@@ -1,0 +1,9 @@
+{
+  "filename": "14 GPT Muster-Versicherungsschein-Kfz-DE.pdf",
+  "entities": {
+    "contract_number": ["500001"],
+    "insurer": ["Allianz Versicherung AG"],
+    "client_name": ["Max Mustermann"],
+    "birth_date": ["15.05.1985"]
+  }
+}

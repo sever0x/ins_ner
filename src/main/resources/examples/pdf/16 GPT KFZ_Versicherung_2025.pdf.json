@@ -1,0 +1,9 @@
+{
+  "filename": "16 GPT KFZ_Versicherung_2025.pdf",
+  "entities": {
+    "contract_number": ["NS-KFZ-2025-0001"],
+    "insurer": ["Nordstern Versicherung AG"],
+    "client_name": ["Jonas Weber"],
+    "birth_date": ["14.03.1988"]
+  }
+}

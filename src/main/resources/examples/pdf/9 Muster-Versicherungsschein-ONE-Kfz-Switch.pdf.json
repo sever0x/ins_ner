@@ -1,0 +1,9 @@
+{
+  "filename": "9 Muster-Versicherungsschein-ONE-Kfz-Switch.pdf",
+  "entities": {
+    "contract_number": ["100001"],
+    "insurer": ["ONE Versicherung AG"],
+    "client_name": ["Herbert Onemann"],
+    "birth_date": ["26.07.2017"]
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "filename": "11 Ihre Police.pdf",
+  "entities": {
+    "contract_number": ["9999999", "KPT90909999"],
+    "insurer": ["KPT Krankenkasse AG", "KPT Versicherungen AG"],
+    "client_name": ["Gianni Pellegrini"],
+    "birth_date": ["01.01.1975"]
+  }
+}

@@ -1,0 +1,8 @@
+{
+  "filename": "1 Versicherungsschein – AXA  assona (DOCPSVX_12338756).pdf",
+  "entities": {
+    "contract_number": ["1234567-111111"],
+    "insurer": ["AXA Versicherung AG"],
+    "client_name": ["Max Mustermann"]
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "filename": "6 versicherungspolice-beispiel.pdf",
+  "entities": {
+    "client_number": ["100 452 956"],
+    "insurer": ["Helsana Versicherungen AG"],
+    "client_name": ["Charles Muster"],
+    "birth_date": ["22.12.1984"]
+  }
+}
