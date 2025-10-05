@@ -1,5 +1,6 @@
 package com.sever0x.processor;
 
+import com.sever0x.processor.api.LayoutApiRetriever;
 import org.apache.pdfbox.Loader;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.text.PDFTextStripper;
@@ -15,8 +16,11 @@ public class DocumentParserService {
 
 	private final Preprocessor preprocessor;
 
-	public DocumentParserService(Preprocessor preprocessor) {
+	private final LayoutApiRetriever layoutApiRetriever;
+
+	public DocumentParserService(Preprocessor preprocessor, LayoutApiRetriever layoutApiRetriever) {
 		this.preprocessor = preprocessor;
+		this.layoutApiRetriever = layoutApiRetriever;
 	}
 
 	public DocumentResponse parseDocument(MultipartFile file) {
@@ -35,7 +39,9 @@ public class DocumentParserService {
 				var sentences = preprocessor.splitIntoSentences(text);
 				pages.add(new DocumentResponse.PageBlock(p, text, sentences));
 			}
-			return new DocumentResponse(filename, totalPages, pages);
+
+			var layout = layoutApiRetriever.retrieveLayout4Pdf(file);
+			return new DocumentResponse(filename, totalPages, pages, layout.pages());
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}

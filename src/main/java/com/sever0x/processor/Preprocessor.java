@@ -1,14 +1,14 @@
 package com.sever0x.processor;
 
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
 import java.text.BreakIterator;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-@Service
+@Component
 public class Preprocessor {
 
 	public String normalize(String raw) {

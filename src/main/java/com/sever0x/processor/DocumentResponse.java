@@ -1,19 +1,23 @@
 package com.sever0x.processor;
 
+import com.sever0x.processor.api.PdfLayoutResponse;
+
 import java.util.List;
 
 public class DocumentResponse {
 	private String filename;
 	private int pageCount;
 	private List<PageBlock> pages;
+	private List<PdfLayoutResponse.PdfLayoutPage> layoutPages;
 
 	public DocumentResponse() {
 	}
 
-	public DocumentResponse(String filename, int pageCount, List<PageBlock> pages) {
+	public DocumentResponse(String filename, int pageCount, List<PageBlock> pages, List<PdfLayoutResponse.PdfLayoutPage> layoutPages) {
 		this.filename = filename;
 		this.pageCount = pageCount;
 		this.pages = pages;
+		this.layoutPages = layoutPages;
 	}
 
 	public String getFilename() {
@@ -38,6 +42,14 @@ public class DocumentResponse {
 
 	public void setPages(List<PageBlock> pages) {
 		this.pages = pages;
+	}
+
+	public List<PdfLayoutResponse.PdfLayoutPage> getLayoutPages() {
+		return layoutPages;
+	}
+
+	public void setLayoutPages(List<PdfLayoutResponse.PdfLayoutPage> layoutPages) {
+		this.layoutPages = layoutPages;
 	}
 
 	public static class PageBlock {
