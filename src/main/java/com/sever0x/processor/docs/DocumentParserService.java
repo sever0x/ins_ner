@@ -1,9 +1,11 @@
 package com.sever0x.processor.docs;
 
 import com.sever0x.processor.api.LayoutApiRetriever;
+import com.sever0x.processor.api.PdfLayoutResponse;
 import org.apache.pdfbox.Loader;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.text.PDFTextStripper;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -17,6 +19,9 @@ public class DocumentParserService {
 	private final Preprocessor preprocessor;
 
 	private final LayoutApiRetriever layoutApiRetriever;
+
+	@Value("${api.layout.enabled}")
+	private boolean isLayoutApiEnabled;
 
 	public DocumentParserService(Preprocessor preprocessor, LayoutApiRetriever layoutApiRetriever) {
 		this.preprocessor = preprocessor;
@@ -40,8 +45,11 @@ public class DocumentParserService {
 				pages.add(new DocumentResponse.PageBlock(p, text, sentences));
 			}
 
-			var layout = layoutApiRetriever.retrieveLayout4Pdf(file);
-			return new DocumentResponse(filename, totalPages, pages, layout.pages());
+			List<PdfLayoutResponse.PdfLayoutPage> layout = new ArrayList<>();
+			if (isLayoutApiEnabled) {
+				layout = layoutApiRetriever.retrieveLayout4Pdf(file).pages();
+			}
+			return new DocumentResponse(filename, totalPages, pages, layout);
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}

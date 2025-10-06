@@ -1,3 +1,6 @@
 spring:
   application:
     name: ins
+api:
+  layout:
+    enabled: false
