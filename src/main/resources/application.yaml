@@ -4,3 +4,8 @@ spring:
 api:
   layout:
     enabled: false
+
+mailgen:
+  templateLocation: "classpath:templates"
+  defaultOnMissing: "LEAVE"                        # LEAVE | EMPTY | ERROR
+  defaultLineEndings: "LF"                         # LF | CRLF
