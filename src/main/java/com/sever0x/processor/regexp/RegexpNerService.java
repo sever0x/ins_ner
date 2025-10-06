@@ -32,6 +32,16 @@ public class RegexpNerService {
 	);
 	private static final String INSURER_SUFFIX_PATTERN = String.join("|", INSURER_SUFFIXES);
 
+	private static final List<String> NAME_STOP_WORDS = List.of(
+			"straße", "strasse", "str.", "adresse", "adress",
+			"postleitzahl", "plz", "hausnummer", "wohnort", "policyholder",
+			"policenummer", "policennummer", "policenr", "versicherungsnummer"
+	);
+
+	private static final List<String> CLIENT_NAME_PREFIXES_TO_IGNORE = List.of(
+			"herr", "frau", "mr", "ms", "mrs"
+	);
+
 	private final List<CompiledRegexRule> compiledRules;
 
 	/**
@@ -53,30 +63,33 @@ public class RegexpNerService {
 	 */
 	private List<RegexRule> createRules() {
 		return List.of(
-				new RegexRule("contract_number", "(?iu)Vertragsnr\\.\\s*([A-Z0-9][A-Z0-9./\\-]{4,30})"),
-				new RegexRule("contract_number", "(?iu)Versicherungsschein-Nummer:\\s*([A-Z0-9/\\-]{8,30})"),
-				new RegexRule("contract_number", "(?iu)Police[-\\s]*Nr\\.?\\s*([A-Z0-9][A-Z0-9./\\-]{4,30})"),
+				new RegexRule("contract_number", "(?iu)Vertragsnr\\.\\s*([A-Z0-9][A-Z0-9._/\\-]{4,30})"),
+				new RegexRule("contract_number", "(?iu)Versicherungsschein-Nummer:\\s*([A-Z0-9._/\\-]{8,30})"),
+				new RegexRule("contract_number", "(?iu)Police[\\-\\s]*Nr\\.?\\s*([A-Z0-9][A-Z0-9._/\\-]{4,30})"),
 				new RegexRule("contract_number", "(?iu)Versicherungsschein\\s+zur\\s+Kfz-Versicherung\\s+Nr\\.\\s*(\\d{5,10})"),
 				new RegexRule("contract_number", "(?iu)VERSICHERUNGS-NACHWEIS\\s+FÜR\\s+DIE\\s+VERTRAGS-NR:\\s*([A-Z0-9]{8,12})"),
 				new RegexRule("contract_number", "(?iu)(?:Police-Nr\\.|Versicherungsschein\\s+Nr\\.|Vertragsnummer:|Pol.-Nr.:)\\s*([A-Z]{2,5}-[A-Z]{2,5}-\\d{4}-\\d{4,5})"),
-				new RegexRule("contract_number", "(?iu)(?:Police\\s*Nr\\.|Vertragsnummer:|Pol.-Nr.:|Contract Nr.:)\\s*([A-Z0-9_]{5,15})"),
+				new RegexRule("contract_number", "(?iu)(?:Police\\s*Nr\\.|Vertragsnummer:|Vertrags-Nr\\.|Pol.-Nr.:|Contract Nr.:|Contract No\\.|Contract Number:|Policy Number:|Policen-?nummer:?)\\s*([A-Z0-9._/\\-]{5,30})"),
 				new RegexRule("contract_number", "(?iu)Police\\s*Nr\\.:\\s*(KPT\\d{7,10}|\\d{7,10})"),
+				new RegexRule("contract_number", "(?iu)(?:Vorgangsnummer|Vorgangs-Nr\\.|Buchungsnummer|Ticketnummer):\\s*([A-Z0-9._/\\-]{5,30})"),
+				new RegexRule("contract_number", "(?iu)(?:Nr\\.|No\\.|Nº)\\s*([A-Z]{1,4}-[A-Z0-9]{2,8}-\\d{3,8}(?:-\\d{2,6})?)"),
 
-				new RegexRule("client_number", "(?iu)^[A-ZÄÖÜ][a-zäöüß]+\\s+[A-ZÄÖÜ][a-zäöüß]+,\\s*\\d{2}\\.\\d{2}\\.\\d{4},\\s*Versicherten-Nr\\.\\s*([\\d\\s]{3}\\s[\\d\\s]{3}\\s[\\d\\s]{3})"),
-				new RegexRule("client_number", "(?iu)^\\s*Versicherten-Nr\\.\\s*([\\d]{3}\\s[\\d]{3}\\s[\\d]{3})"),
+				new RegexRule("client_number", "(?iu)^[A-ZÄÖÜ][a-zäöüß]+\\s+[A-ZÄÖÜ][a-zäöüß]+,\\s*\\d{2}\\.\\d{2}\\.\\d{4},\\s*Versicherten-Nr\\.\\s*((?<!\\d)\\d{3}\\s\\d{3}\\s\\d{3}(?!\\d))"),
+				new RegexRule("client_number", "(?iu)^\\s*Versicherten-Nr\\.\\s*((?<!\\d)\\d{3}\\s\\d{3}\\s\\d{3}(?!\\d))"),
 
 				new RegexRule("insurer", "(?iu)(?:^|\\n)\\s*(?:Versicherer:|Versicherer\\s+ist\\s+die)\\s*([A-ZÄÖÜ][A-Za-zÄÖÜäöüß&\\.\\- ]{5,80}?(?:" + INSURER_SUFFIX_PATTERN + "))\\b"),
-//				new RegexRule("insurer", "(?iu)(AXA\\s+Versicherung\\s+AG|AKG\\s+Assekuranz-Kontor\\s+GmbH|Helvetia|Helsana\\s+Versicherungen\\s+AG|R\\+V\\s+Lebensversicherung\\s+AG|ONE\\s+Versicherung\\s+AG|Schweizerische\\s+Mobiliar\\s+Versicherungsgesellschaft\\s+AG|KPT\\s+(?:Krankenkasse|Versicherungen)\\s+AG|AWP\\s+P&C\\s+S\\.A\\.|Allianz\\s+Versicherung\\s+AG|GlobalTravel\\s+Versicherung\\s+AG|Nordstern\\s+Versicherung\\s+AG|SilberKlar\\s+Versicherung\\s+AG|HanseLife\\s+Versicherung\\s+AG)\\b"),
-				new RegexRule("insurer", "(?iu)([A-ZÄÖÜ]{3,}\\s+(?:Versicherung|Versicherungen|Assekuranz|Kontor|Krankenkasse|Mobiliar)\\s+[A-Za-zÄÖÜäöüß]*\\s*(?:AG|GmbH|S\\.A\\.))\\b"),
+				new RegexRule("insurer", "(?iu)([A-ZÄÖÜ]{3,}\\s+(?:Versicherung|Versicherungen|Assekuranz|Kontor|Krankenkasse|Mobiliar)\\s+[A-Za-zÄÖÜäöüß&]*\\s*(?:AG|GmbH|S\\.A\\.))\\b"),
+				new RegexRule("insurer", "(?iu)(AWP\\s+P&C\\s+S\\.A\\.|KPT\\s+(?:Krankenkasse|Versicherungen)\\s+AG|Helsana\\s+Versicherungen\\s+AG|R\\+V\\s+Lebensversicherung\\s+AG|AKG\\s+Assekuranz-Kontor\\s+GmbH|AXA\\s+Versicherung\\s+AG)"),
 
-				new RegexRule("client_name", "(?iu)(?:Versicherungsnehmer:|Name:|Versicherte:|Kunde:|Policenhalter:)\\s*([A-ZÄÖÜ][a-zäöüß]+(?:\\s+(?:von|van|zu|de|der))?(?:\\s+[A-ZÄÖÜ][a-zäöüß]+){0,3})"),
-				new RegexRule("client_name", "(?iu)Versicherungsnehmer\\s*\\n\\s*([A-ZÄÖÜ][a-zäöüß]+\\s+[A-ZÄÖÜ][a-zäöüß]+)"),
+				new RegexRule("client_name", "(?iu)(?:Versicherungsnehmer(?:in)?|Versicherungsnehmer/in|Versicherungsnehmer/-in|Name des Kunden|Name des Versicherungsnehmers|Kunde|Versicherte Person|Versicherungsnehmer:|Name:|Versicherte:|Policenhalter:|Policyholder:)\\s*([A-ZÄÖÜ][a-zäöüß]+(?:\\s+(?:von|van|zu|de|der|den))?(?:\\s+[A-ZÄÖÜ][a-zäöüß]+){0,3})"),
+				new RegexRule("client_name", "(?iu)Versicherungsnehmer\\s*\\n\\s*([A-ZÄÖÜ][a-zäöüß]+\\s+[A-ZÄÖÜ][a-zäöüß]+(?:\\s+(?:von|van|zu|de|der|den)\\s+[A-ZÄÖÜ][a-zäöüß]+)?)"),
 
 				new RegexRule("birth_date", "(?iu)Geburtsdatum:\\s*(\\d{2}\\.\\d{2}\\.\\d{4})"),
 				new RegexRule("birth_date", "(?iu)(?:Geb\\.:|Geboren\\s+am:|geb\\.\\s*)(\\d{2}\\.\\d{2}\\.\\d{4})"),
 				new RegexRule("birth_date", "(?iu)[A-ZÄÖÜ][a-zäöüß]+\\s+[A-ZÄÖÜ][a-zäöüß]+,\\s*(\\d{2}\\.\\d{2}\\.\\d{4})")
 		);
 	}
+
 
 	/**
 	 * Extracts entities from the given text based on predefined regex patterns.
@@ -116,14 +129,38 @@ public class RegexpNerService {
 	private String normalize(String label, String value) {
 		value = value.replaceAll("[\\n\\r]+", " ").trim();
 
-		if ("contract_number".equals(label) || "client_number".equals(label)) {
-			value = value.replaceAll("[^A-Z0-9/\\-]", "");
+		if ("contract_number".equals(label)) {
+			value = value.replaceAll("[^A-Z0-9._/\\-]", "").toUpperCase(Locale.ROOT);
+		}
+		if ("client_number".equals(label)) {
+			String digitsOnly = value.replaceAll("\\D", "");
+			if (digitsOnly.length() == 9) {
+				value = digitsOnly.replaceAll("(\\d{3})(\\d{3})(\\d{3})", "$1 $2 $3");
+			} else {
+				value = digitsOnly;
+			}
 		}
 		if ("client_name".equals(label)) {
 			value = value.replaceAll(",.*", "")
-					.replaceAll("\\b(Straße|Strasse|Str\\.|Adresse|Postleitzahl|PLZ|Hausnummer|Hausnr\\.|Wohnort|Geburtsdatum)\\b.*", "")
+					.replaceAll("\\b(Straße|Strasse|Str\\.|Adresse|Postleitzahl|PLZ|Hausnummer|Hausnr\\.|Wohnort|Geburtsdatum|Policyholder|Policenummer|Policennummer|Policenr\\.|Versicherungsnummer)\\b.*", "")
 					.trim()
 					.replaceAll("\\s+", " ");
+
+			List<String> tokens = new ArrayList<>();
+			for (String part : value.split("\\s+")) {
+				if (part.isEmpty()) continue;
+				String cleaned = part.replaceAll("[.,]$", "");
+				String lower = cleaned.toLowerCase(Locale.ROOT);
+				if (NAME_STOP_WORDS.contains(lower)) break;
+				if (CLIENT_NAME_PREFIXES_TO_IGNORE.contains(lower)) {
+					continue;
+				}
+				if (cleaned.matches("(?i).*(straße|strasse|str\\.|adresse|plz|hausnr\\.|gmbh|ag|versicherung|makler).*") || cleaned.matches(".*\\d.*")) {
+					break;
+				}
+				tokens.add(cleaned);
+			}
+			value = String.join(" ", tokens).trim();
 		}
 		if ("birth_date".equals(label)) {
 			if (value.matches("\\d{1,2}\\.\\d{1,2}\\.\\d{4}")) {
@@ -172,9 +209,14 @@ public class RegexpNerService {
 				return day >= 1 && day <= 31 && month >= 1 && month <= 12 && year >= 1900 && year <= 2025;
 
 			case "client_name":
+				if (value.matches("(?i).*(gmbh|ag|versicherung|versicherungen|makler|versicherungsgesellschaft).*")) {
+					return false;
+				}
+				if (value.matches("(?i).*(policyholder|policenummer|versicherungsnummer|kundennummer).*") || value.matches(".*\\d.*")) {
+					return false;
+				}
 				String[] nameParts = value.split("\\s+");
 				return nameParts.length >= 2 && nameParts.length <= 4 &&
-				       !value.matches(".*\\d.*") &&
 				       value.length() >= 5 && value.length() <= 50 &&
 				       Arrays.stream(nameParts).allMatch(part -> !part.isEmpty() && Character.isUpperCase(part.charAt(0)));
 			default:
@@ -182,6 +224,9 @@ public class RegexpNerService {
 		}
 	}
 
-	private record RegexRule(String label, String regex) {}
-	private record CompiledRegexRule(String label, Pattern pattern) {}
+	private record RegexRule(String label, String regex) {
+	}
+
+	private record CompiledRegexRule(String label, Pattern pattern) {
+	}
 }
