@@ -66,7 +66,7 @@ public class RegexpNerService {
 				new RegexRule("client_number", "(?iu)^\\s*Versicherten-Nr\\.\\s*([\\d]{3}\\s[\\d]{3}\\s[\\d]{3})"),
 
 				new RegexRule("insurer", "(?iu)(?:^|\\n)\\s*(?:Versicherer:|Versicherer\\s+ist\\s+die)\\s*([A-ZÄÖÜ][A-Za-zÄÖÜäöüß&\\.\\- ]{5,80}?(?:" + INSURER_SUFFIX_PATTERN + "))\\b"),
-				new RegexRule("insurer", "(?iu)(AXA\\s+Versicherung\\s+AG|AKG\\s+Assekuranz-Kontor\\s+GmbH|Helvetia|Helsana\\s+Versicherungen\\s+AG|R\\+V\\s+Lebensversicherung\\s+AG|ONE\\s+Versicherung\\s+AG|Schweizerische\\s+Mobiliar\\s+Versicherungsgesellschaft\\s+AG|KPT\\s+(?:Krankenkasse|Versicherungen)\\s+AG|AWP\\s+P&C\\s+S\\.A\\.|Allianz\\s+Versicherung\\s+AG|GlobalTravel\\s+Versicherung\\s+AG|Nordstern\\s+Versicherung\\s+AG|SilberKlar\\s+Versicherung\\s+AG|HanseLife\\s+Versicherung\\s+AG)\\b"),
+//				new RegexRule("insurer", "(?iu)(AXA\\s+Versicherung\\s+AG|AKG\\s+Assekuranz-Kontor\\s+GmbH|Helvetia|Helsana\\s+Versicherungen\\s+AG|R\\+V\\s+Lebensversicherung\\s+AG|ONE\\s+Versicherung\\s+AG|Schweizerische\\s+Mobiliar\\s+Versicherungsgesellschaft\\s+AG|KPT\\s+(?:Krankenkasse|Versicherungen)\\s+AG|AWP\\s+P&C\\s+S\\.A\\.|Allianz\\s+Versicherung\\s+AG|GlobalTravel\\s+Versicherung\\s+AG|Nordstern\\s+Versicherung\\s+AG|SilberKlar\\s+Versicherung\\s+AG|HanseLife\\s+Versicherung\\s+AG)\\b"),
 				new RegexRule("insurer", "(?iu)([A-ZÄÖÜ]{3,}\\s+(?:Versicherung|Versicherungen|Assekuranz|Kontor|Krankenkasse|Mobiliar)\\s+[A-Za-zÄÖÜäöüß]*\\s*(?:AG|GmbH|S\\.A\\.))\\b"),
 
 				new RegexRule("client_name", "(?iu)(?:Versicherungsnehmer:|Name:|Versicherte:|Kunde:|Policenhalter:)\\s*([A-ZÄÖÜ][a-zäöüß]+(?:\\s+(?:von|van|zu|de|der))?(?:\\s+[A-ZÄÖÜ][a-zäöüß]+){0,3})"),
