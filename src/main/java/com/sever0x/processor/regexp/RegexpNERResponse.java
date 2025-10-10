@@ -8,4 +8,8 @@ import java.util.Map;
 public record RegexpNERResponse(
 		String filename,
 		Map<String, List<String>> entities
-) implements NERResponse {}
+) implements NERResponse {
+	public RegexpNERResponse(Map<String, List<String>> entities) {
+		this("", entities);
+	}
+}

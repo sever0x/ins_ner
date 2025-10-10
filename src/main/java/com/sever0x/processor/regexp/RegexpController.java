@@ -4,15 +4,13 @@ import com.sever0x.processor.BaseNERController;
 import com.sever0x.processor.NERResponse;
 import com.sever0x.processor.docs.DocumentParserService;
 import com.sever0x.processor.docs.DocumentResponse;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/regexp")
 public class RegexpController implements BaseNERController {
 
 	private final RegexpNerService regexpNerService;
@@ -25,7 +23,7 @@ public class RegexpController implements BaseNERController {
 	}
 
 	@Override
-	@PostMapping("/regexp")
+	@PostMapping("/file")
 	public NERResponse getEntities(MultipartFile file) {
 		var document = documentParserService.parseDocument(file);
 		String allText = document.getPages().stream()
@@ -34,5 +32,10 @@ public class RegexpController implements BaseNERController {
 		var entities = regexpNerService.extractEntities(allText);
 
 		return new RegexpNERResponse(file.getOriginalFilename(), entities);
+	}
+
+	@PostMapping("/text")
+	public NERResponse getEntities(@RequestBody String raw) {
+		return new RegexpNERResponse(regexpNerService.extractEntities(raw));
 	}
 }
