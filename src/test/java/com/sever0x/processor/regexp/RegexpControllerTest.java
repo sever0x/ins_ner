@@ -79,11 +79,12 @@ class RegexpControllerTest {
 		MockMultipartFile mockFile = new MockMultipartFile("file", filename, "application/pdf", pdfBytes);
 
 		NERResponse response = controller.getEntities(mockFile);
-		assertThat(response).isInstanceOf(RegexpNERResponse.class);
-		var actualEntities = ((RegexpNERResponse) response).entities();
+		assertThat(response).isInstanceOf(NERResponse.class);
+		var actualEntities = response.entities();
 
 		File expectedFile = new ClassPathResource("examples/pdf/" + filename + ".json").getFile();
-		Map<String, Object> expected = objectMapper.readValue(expectedFile, new TypeReference<>() {});
+		Map<String, Object> expected = objectMapper.readValue(expectedFile, new TypeReference<>() {
+		});
 
 		@SuppressWarnings("unchecked")
 		Map<String, List<String>> expectedEntities = (Map<String, List<String>>) expected.get("entities");
@@ -163,5 +164,6 @@ class RegexpControllerTest {
 		assertThat(result.get("birth_date")).contains("15.05.1985");
 	}
 
-	record NERTestResult(String filename, int tp, int fp, int fn) {}
+	record NERTestResult(String filename, int tp, int fp, int fn) {
+	}
 }

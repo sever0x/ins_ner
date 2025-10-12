@@ -1,4 +1,4 @@
-package com.sever0x.processor.regexp;
+package com.sever0x.processor.flair;
 
 import com.sever0x.processor.BaseNERController;
 import com.sever0x.processor.NERResponse;
@@ -11,16 +11,16 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/api/regexp")
-public class RegexpController implements BaseNERController {
-
-	private final RegexpNerService regexpNerService;
+@RequestMapping("/api/flair")
+public class FlairController implements BaseNERController {
 
 	private final DocumentParserService documentParserService;
 
-	public RegexpController(RegexpNerService regexpNerService, DocumentParserService documentParserService) {
-		this.regexpNerService = regexpNerService;
+	private final FlairService flairService;
+
+	public FlairController(DocumentParserService documentParserService, FlairService flairService) {
 		this.documentParserService = documentParserService;
+		this.flairService = flairService;
 	}
 
 	@Override
@@ -29,13 +29,13 @@ public class RegexpController implements BaseNERController {
 		String allText = document.getPages().stream()
 				.map(DocumentResponse.PageBlock::getText)
 				.collect(Collectors.joining("\n"));
-		var entities = regexpNerService.extractEntities(allText);
 
+		var entities = flairService.getEntities(allText);
 		return new NERResponse(file.getOriginalFilename(), entities);
 	}
 
 	@Override
 	public NERResponse getEntities(String raw) {
-		return new NERResponse(regexpNerService.extractEntities(raw));
+		return new NERResponse(flairService.getEntities(raw));
 	}
 }
