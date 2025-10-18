@@ -22,8 +22,8 @@ public class McpNerService {
 	@Nullable
 	private final VectorStore vectorStore;
 
-	public McpNerService(ChatClient.Builder chatClientBuilder, Preprocessor preprocessor, @Nullable VectorStore vectorStore) {
-		this.chatClient = chatClientBuilder.build();
+	public McpNerService(ChatClient chatClient, Preprocessor preprocessor, @Nullable VectorStore vectorStore) {
+		this.chatClient = chatClient;
 		this.preprocessor = preprocessor;
 		this.vectorStore = vectorStore;
 	}
