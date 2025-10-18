@@ -1,6 +1,34 @@
 spring:
   application:
     name: ins
+  datasource:
+    url: jdbc:postgresql://localhost:5432/ner_db
+    username: postgres
+    password: postgres
+  ai:
+    mcp:
+      server:
+        enabled: true
+        name: MCP-NER
+        version: 0.0.1
+        type: SYNC
+    model:
+      chat: ollama
+    ollama:
+      base-url: http://localhost:11434
+      chat:
+        options:
+          model: gpt-oss:20b
+          temperature: 0.2
+      embedding:
+        options:
+          model: nomic-embed-text
+    vectorstore:
+      pgvector:
+        initialize-schema: true
+        dimensions: 768
+        index-type: hnsw
+        distance-type: cosine_distance
 api:
   layout:
     enabled: false
