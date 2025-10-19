@@ -42,7 +42,7 @@ api:
   layout:
     enabled: false
   validation:
-    url: http://localhost:8081/api/foreign-service/stub
+    url: http://localhost:8080/api/foreign-service/stub
 
 mailgen:
   templateLocation: "classpath:templates"
