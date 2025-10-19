@@ -13,25 +13,36 @@ spring:
         version: 0.0.1
         type: SYNC
     model:
-      chat: ollama
-    ollama:
-      base-url: http://localhost:11434
+      chat: openai
+#    ollama:
+#      base-url: http://localhost:11434
+#      chat:
+#        options:
+#          model: gpt-oss:20b
+#          temperature: 0.1
+#      embedding:
+#        options:
+#          model: nomic-embed-text
+    openai:
+      api-key: ${OPENAI_API_KEY}
       chat:
         options:
-          model: gpt-oss:20b
-          temperature: 0.2
+          model: gpt-4.1-nano
+          temperature: 0.1
       embedding:
         options:
-          model: nomic-embed-text
+          model: text-embedding-3-small  # 1536 dims
     vectorstore:
       pgvector:
         initialize-schema: true
-        dimensions: 768
+        dimensions: 1536
         index-type: hnsw
         distance-type: cosine_distance
 api:
   layout:
     enabled: false
+  validation:
+    url: http://localhost:8081/api/foreign-service/stub
 
 mailgen:
   templateLocation: "classpath:templates"

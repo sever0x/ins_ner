@@ -33,17 +33,7 @@ public class DocumentParserService {
 		List<DocumentResponse.PageBlock> pages = new ArrayList<>();
 
 		try (PDDocument document = Loader.loadPDF(file.getInputStream().readAllBytes())) {
-			PDFTextStripper stripper = new PDFTextStripper();
-			int totalPages = document.getNumberOfPages();
-
-			for (int p = 1; p <= totalPages; p++) {
-				stripper.setStartPage(p);
-				stripper.setStartPage(p);
-				String raw = stripper.getText(document);
-				String text = preprocessor.normalize(raw);
-				var sentences = preprocessor.splitIntoSentences(text);
-				pages.add(new DocumentResponse.PageBlock(p, text, sentences));
-			}
+			int totalPages = getTotalPages(document, pages);
 
 			List<PdfLayoutResponse.PdfLayoutPage> layout = new ArrayList<>();
 			if (isLayoutApiEnabled) {
@@ -53,5 +43,30 @@ public class DocumentParserService {
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
+	}
+
+	public DocumentResponse parseDocument(byte[] bytes, String filename) {
+		List<DocumentResponse.PageBlock> pages = new ArrayList<>();
+		try (PDDocument document = Loader.loadPDF(bytes)) {
+			int totalPages = getTotalPages(document, pages);
+			return new DocumentResponse(filename, totalPages, pages, new ArrayList<>());
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	private int getTotalPages(PDDocument document, List<DocumentResponse.PageBlock> pages) throws IOException {
+		PDFTextStripper stripper = new PDFTextStripper();
+		int totalPages = document.getNumberOfPages();
+
+		for (int p = 1; p <= totalPages; p++) {
+			stripper.setStartPage(p);
+			stripper.setEndPage(p);
+			String raw = stripper.getText(document);
+			String text = preprocessor.normalize(raw);
+			var sentences = preprocessor.splitIntoSentences(text);
+			pages.add(new DocumentResponse.PageBlock(p, text, sentences));
+		}
+		return totalPages;
 	}
 }

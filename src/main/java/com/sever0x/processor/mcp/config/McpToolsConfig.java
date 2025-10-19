@@ -1,6 +1,10 @@
-package com.sever0x.processor.mcp.tools;
+package com.sever0x.processor.mcp.config;
 
 import com.fasterxml.jackson.core.JsonGenerator;
+import com.sever0x.processor.mcp.tools.EnrichmentTools;
+import com.sever0x.processor.mcp.tools.NerMcpTools;
+import com.sever0x.processor.mcp.tools.ParseTools;
+import com.sever0x.processor.mcp.tools.ValidationTools;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.model.ChatModel;
 import org.springframework.ai.tool.ToolCallbackProvider;
@@ -12,8 +16,13 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class McpToolsConfig {
 	@Bean
-	public ToolCallbackProvider toolCallbackProvider(NerMcpTools tools) {
-		return MethodToolCallbackProvider.builder().toolObjects(tools).build();
+	public ToolCallbackProvider toolCallbackProvider(NerMcpTools nerMcpTools,
+	                                                 EnrichmentTools enrichmentTools,
+	                                                 ParseTools parseTools,
+	                                                 ValidationTools validationTools) {
+		return MethodToolCallbackProvider.builder()
+				.toolObjects(nerMcpTools, enrichmentTools, parseTools, validationTools)
+				.build();
 	}
 
 	@Bean

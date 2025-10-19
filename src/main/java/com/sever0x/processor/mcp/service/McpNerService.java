@@ -6,8 +6,6 @@ import jakarta.annotation.Nullable;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.converter.BeanOutputConverter;
 import org.springframework.ai.document.Document;
-import org.springframework.ai.vectorstore.SearchRequest;
-import org.springframework.ai.vectorstore.VectorStore;
 import org.springframework.stereotype.Service;
 
 import java.util.LinkedHashMap;
@@ -19,25 +17,20 @@ import java.util.stream.Collectors;
 public class McpNerService {
 	private final ChatClient chatClient;
 	private final Preprocessor preprocessor;
-	@Nullable
-	private final VectorStore vectorStore;
+	private final VectorStoreService vectorStoreService;
 
-	public McpNerService(ChatClient chatClient, Preprocessor preprocessor, @Nullable VectorStore vectorStore) {
+	public McpNerService(ChatClient chatClient, Preprocessor preprocessor, VectorStoreService vectorStoreService) {
 		this.chatClient = chatClient;
 		this.preprocessor = preprocessor;
-		this.vectorStore = vectorStore;
+		this.vectorStoreService = vectorStoreService;
 	}
 
 	public NERResponse extract(String rawText, @Nullable String filename) {
 		String text = preprocessor.normalize(rawText);
 
-		String ragContext = "";
-		if (vectorStore != null) {
-			var top = vectorStore.similaritySearch(
-					SearchRequest.builder().query(text).topK(5).build()
-			);
-			ragContext = top.stream().map(Document::getText).collect(Collectors.joining("\n---\n"));
-		}
+		List<Document> top = vectorStoreService.getDocuments(text);
+		String ragContext = top.stream().map(Document::getText).collect(Collectors.joining("\n---\n"));
+
 		var converter = new BeanOutputConverter<>(NerPayload.class);
 		String format = converter.getFormat();
 
