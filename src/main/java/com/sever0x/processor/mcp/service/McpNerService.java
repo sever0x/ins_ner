@@ -35,13 +35,13 @@ public class McpNerService {
 		String format = converter.getFormat();
 
 		String system = """
-				Ти — досвідчена NER-система, спеціалізована на страхових документах (страхові поліси, листи, звіти, рахунки).
-				Твоя задача — витягати іменовані сутності зі вхідного тексту та повертати ТІЛЬКИ валідний JSON (відповідно до RFC8259),
-				який строго відповідає поданій JSON Schema.
+				You are an experienced NER system specializing in insurance documents (insurance policies, letters, reports, invoices).
+				Your task is to extract named entities from the input text and return ONLY valid JSON (according to RFC8259),
+				which must strictly follow the provided JSON Schema.
 				
-				Мова вхідного тексту — німецька або англійська.
+				The input text language is German or English.
 				
-				Схема JSON:
+				JSON Schema:
 				{
 				  "entities": {
 				    "client_name": string[],
@@ -53,27 +53,27 @@ public class McpNerService {
 				  }
 				}
 				
-				Інструкції:
-				- Повертай лише ті значення, що явно присутні у вхідному тексті (жодних домислів чи нормалізації).
-				- Використовуй точний текстовий фрагмент (як у джерелі).
-				- Якщо сутності відсутні — повертай порожні масиви [].
-				- Видаляй дублікати (навіть якщо у тексті кілька згадок одного і того ж значення).
-				- Під "client_firma_name" розумій компанію-клієнта (страхувальника), а також її дочірні компанії.
-				- Під "insurer_firma_name" розумій страхову компанію або сервісну організацію, що обслуговує клієнта.
-				- Під "client_name" розумій фізичних осіб, які представляють клієнта (наприклад, фінансового директора, бухгалтера).
-				- Не додавай представників страховика у "client_name".
-				- Під "contract_number" розпізнавай усі послідовності, що схожі на номери страхових договорів чи полісів.
-				- Значення з RAG-контексту — лише допоміжна підказка, але остаточні сутності витягуй лише з основного тексту.
-				- Результат повинен бути чистим JSON без коментарів, пояснень або додаткового тексту.
+				Instructions:
+				- Return only the values that are explicitly present in the input text (no assumptions or normalization).
+				- Use the exact text fragment as it appears in the source.
+				- If an entity is missing, return an empty array [].
+				- Remove duplicates (even if the same value appears multiple times in the text).
+				- "client_firma_name" refers to the client company (the policyholder) as well as its subsidiaries, but only in documents where these subsidiaries are explicitly mentioned.
+				- "insurer_firma_name" refers to the insurance company or service organization providing services to the client.
+				- "client_name" refers to natural persons representing the client (e.g., CFO, accountant).
+				- Do not include representatives of the insurer under “client_name”.
+				- "contract_number" includes all sequences resembling insurance contract or policy numbers.
+				- RAG context values are for reference only; extract final entities exclusively from the main text.
+				- The result must be pure JSON without comments, explanations, or any additional text.
 				""";
 
 		String user = """
-				 Контекст:
+				 RAG Context:
 				 ```\s
 				 %s
 				 ```
 				
-				 Текст:
+				 Text:
 				 ```
 				 %s
 				 ```
