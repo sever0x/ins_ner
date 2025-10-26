@@ -27,6 +27,11 @@ services:
       - n8n_data:/home/node/.n8n
     extra_hosts:
       - "host.docker.internal:host-gateway"
+    environment:
+      - N8N_COMMUNITY_PACKAGES_ALLOW_TOOL_USAGE=true
+      - N8N_EDITOR_BASE_URL=${NGROK_URL}
+      - WEBHOOK_URL=${NGROK_URL}
+      - N8N_DEFAULT_BINARY_DATA_MODE=filesystem
 
 volumes:
   postgres_data:

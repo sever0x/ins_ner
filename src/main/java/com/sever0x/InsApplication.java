@@ -1,4 +1,4 @@
-package com.sever0x.processor;
+package com.sever0x;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

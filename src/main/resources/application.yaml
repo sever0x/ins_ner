@@ -11,7 +11,7 @@ spring:
         enabled: true
         name: MCP-NER
         version: 0.0.1
-        type: ASYNC
+        type: SYNC
     model:
       chat: openai
 #    ollama:
