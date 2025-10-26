@@ -34,3 +34,4 @@ build/
 /src/main/resources/templates/
 
 .env
+/flair_ready/
